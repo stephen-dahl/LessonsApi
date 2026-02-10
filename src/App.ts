@@ -32,6 +32,12 @@ export const init = async () => {
       res.sendStatus(200);
     });
 
+    // Standard body parsing for non-Lambda environments (Railway, local dev)
+    if (!process.env.AWS_LAMBDA_FUNCTION_NAME) {
+      expApp.use(express.json({ limit: "10mb" }));
+      expApp.use(express.urlencoded({ extended: true, limit: "10mb" }));
+    }
+
     // Handle body parsing from @codegenie/serverless-express
     expApp.use((req, res, next) => {
       const contentType = req.headers["content-type"] || "";
